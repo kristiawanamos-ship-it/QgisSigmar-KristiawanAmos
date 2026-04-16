@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>Peta Interaktif Kecamatan Baolan</title>
+    
+    <!-- OpenLayers CSS -->
+    <link rel="stylesheet" href="./resources/ol.css">
+    <link rel="stylesheet" href="resources/fontawesome-all.min.css">
+    <link rel="stylesheet" href="./resources/ol-layerswitcher.css">
+    <link rel="stylesheet" href="./resources/qgis2web.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        html, body {
+            width: 100%;
+            height: 100%;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .container {
+            display: flex;
+            height: 100vh;
+        }
+        
+        /* SIDEBAR */
+        .sidebar {
+            width: 340px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 100vh;
+            overflow-y: auto;
+            box-shadow: 2px 0 15px rgba(0, 0, 0, 0.2);
+            z-index: 100;
+            color: white;
+        }
+        
+        .sidebar-header {
+            background: rgba(0, 0, 0, 0.15);
+            padding: 30px 20px;
+            text-align: center;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.15);
+        }
+        
+        .sidebar-header h1 {
+            font-size: 26px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .sidebar-header p {
+            font-size: 12px;
+            opacity: 0.95;
+        }
+        
+        .sidebar-content {
+            padding: 20px;
+        }
+        
+        .section {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border-left: 4px solid rgba(255, 215, 0, 0.8);
+            backdrop-filter: blur(10px);
+        }
+        
+        .section-title {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .section-title i {
+            font-size: 16px;
+        }
+        
+        .section-text {
+            font-size: 13px;
+            line-height: 1.6;
+            opacity: 0.95;
+        }
+        
+        .areas-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        
+        .area-item {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 8px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .area-item:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .stat-box {
+            background: rgba(255, 215, 0, 0.15);
+            padding: 10px;
+            border-radius: 6px;
+            text-align: center;
+            border: 1px solid rgba(255, 215, 0, 0.3);
+        }
+        
+        .stat-number {
+            font-size: 22px;
+            font-weight: bold;
+            color: #ffd700;
+        }
+        
+        .stat-label {
+            font-size: 11px;
+            margin-top: 4px;
+            opacity: 0.9;
+        }
+        
+        /* MAP */
+        #map {
+            flex: 1;
+            width: 100%;
+            height: 100%;
+            min-height: 100vh;
+            position: relative;
+        }
+        
+        .map-container {
+            flex: 1;
+            position: relative;
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        .info-overlay {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+            max-width: 260px;
+            z-index: 50;
+            backdrop-filter: blur(10px);
+        }
+        
+        .info-overlay h3 {
+            color: #667eea;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+        
+        .info-overlay p {
+            font-size: 12px;
+            color: #333;
+            line-height: 1.5;
+        }
+        
+        /* Scrollbar */
+        .sidebar::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .sidebar::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .sidebar::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 3px;
+        }
+        
+        .sidebar::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.5);
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                height: auto;
+                max-height: 45vh;
+            }
+            
+            #map {
+                height: 55vh;
+            }
+            
+            .areas-grid {
+                grid-template-columns: 1fr 1fr 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h1><i class="fas fa-map"></i> Kecamatan Baolan</h1>
+                <p>Kabupaten Tolitoli, Sulawesi Tengah</p>
+            </div>
+
+
+            <div class="sidebar-content">
+                <div id="semua" class="tab-content active">
+                    <div class="section">
+                        <div class="section-title"><i class="fas fa-info-circle"></i> Tentang Kecamatan</div>
+                        <div class="section-text">
+                            Kecamatan Baolan adalah salah satu kecamatan di Kabupaten Tolitoli yang terletak di Provinsi Sulawesi Tengah. Wilayah ini memiliki potensi ekonomi yang berkembang, terutama di bidang pertanian dan perdagangan lokal.
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <div class="section-title"><i class="fas fa-building"></i> Kelurahan</div>
+                        <div class="areas-grid">
+                            <div class="area-item">📍 Baru</div>
+                            <div class="area-item">📍 Nalu</div>
+                            <div class="area-item">📍 Panasakan</div>
+                            <div class="area-item">📍 Sidoarjo</div>
+                            <div class="area-item">📍 Tambun</div>
+                            <div class="area-item">📍 Tuweley</div>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <div class="section-title"><i class="fas fa-tree"></i> Desa</div>
+                        <div class="areas-grid">
+                            <div class="area-item">🌾 Dadakitan</div>
+                            <div class="area-item">🌾 Buntuna</div>
+                            <div class="area-item">🌾 Lelean Nono</div>
+                            <div class="area-item">🌾 Pangi</div>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <div class="section-title"><i class="fas fa-map-pin"></i> Profil Kelurahan</div>
+                        <div class="section-text" style="font-size: 12px;">
+                            <strong>Kelurahan Baru:</strong> Area pemukiman dengan perkembangan pesat.<br><br>
+                            <strong>Kelurahan Nalu:</strong> Wilayah dengan komunitas masyarakat yang solid.<br><br>
+                            <strong>Kelurahan Panasakan:</strong> Pusat aktivitas ekonomi dan perdagangan lokal.<br><br>
+                            <strong>Kelurahan Sidoarjo:</strong> Dilengkapi fasilitas umum dan infrastruktur baik.<br><br>
+                            <strong>Kelurahan Tambun:</strong> Area strategis untuk pengembangan wilayah.<br><br>
+                            <strong>Kelurahan Tuweley:</strong> Potensi wisata alam dan sumber daya alam yang kaya.
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <div class="section-title"><i class="fas fa-pagelines"></i> Profil Desa</div>
+                        <div class="section-text" style="font-size: 12px;">
+                            <strong>Desa Dadakitan:</strong> Potensi pertanian yang berkembang dan masyarakat yang bekerja di sektor agribisnis.<br><br>
+                            <strong>Desa Buntuna:</strong> Produk pertanian unggulan dan tradisi budaya masyarakat yang kuat.<br><br>
+                            <strong>Desa Lelean Nono:</strong> Ekosistem alam yang masih terjaga dan potensi ekowisata yang menjanjikan.<br><br>
+                            <strong>Desa Pangi:</strong> Bagian integral pengembangan region Baolan.
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <div class="section-title"><i class="fas fa-hospital"></i> Fasilitas Penting</div>
+                        <div class="section-text">
+                            <div>🏥 <strong>Rumah Sakit</strong> - Pelayanan kesehatan utama untuk wilayah.</div>
+                            <div>🏫 <strong>SMAN 1 Tolitoli</strong> - Institusi pendidikan menengah penting.</div>
+                            <div>📍 Fasilitas pendukung dengan akses mudah dijangkau warga.</div>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <div class="section-title"><i class="fas fa-chart-bar"></i> Statistik Wilayah</div>
+                        <div class="areas-grid" style="grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px;">
+                            <div class="area-item" style="background: rgba(255,255,255,0.16); border-color: rgba(255,255,255,0.22);">6 Kelurahan</div>
+                            <div class="area-item" style="background: rgba(255,255,255,0.16); border-color: rgba(255,255,255,0.22);">4 Desa</div>
+                            <div class="area-item" style="background: rgba(255,255,255,0.16); border-color: rgba(255,255,255,0.22);">10 Wilayah</div>
+                        </div>
+                    </div>
+
+
+
+                    <div class="section author-card">
+                        <h3>Informasi Pembuat</h3>
+                        <p><strong>NAMA:</strong> KRISTIAWAN BERND GARCIA AMOS<br><strong>NIM:</strong> 241011060037</p>
+                    </div>
+                </div>
+
+                <div id="kelurahan" class="tab-content">
+                    <div class="area-card" data-area="kelurahan-baru" data-type="kelurahan">
+                        <div class="area-card-header"><span>🏘️ Kel. Baru</span><span class="area-card-icon">›</span></div>
+                        <div class="area-card-body"><p>Kelurahan yang terletak di wilayah Kecamatan Baolan dengan pemukiman penduduk yang ramai dan berkembang pesat.</p></div>
+                    </div>
+                    <div class="area-card" data-area="kelurahan-nalu" data-type="kelurahan">
+                        <div class="area-card-header"><span>🏘️ Kel. Nalu</span><span class="area-card-icon">›</span></div>
+                        <div class="area-card-body"><p>Area kelurahan dengan karakteristik geografis yang unik dan komunitas masyarakat yang solid.</p></div>
+                    </div>
+                    <div class="area-card" data-area="kelurahan-panasakan" data-type="kelurahan">
+                        <div class="area-card-header"><span>🏘️ Kel. Panasakan</span><span class="area-card-icon">›</span></div>
+                        <div class="area-card-body"><p>Kelurahan yang dikenal dengan potensi perdagangan dan pusat aktivitas ekonomi lokal.</p></div>
+                    </div>
+                    <div class="area-card" data-area="kelurahan-sidoarjo" data-type="kelurahan">
+                        <div class="area-card-header"><span>🏘️ Kel. Sidoarjo</span><span class="area-card-icon">›</span></div>
+                        <div class="area-card-body"><p>Area kelurahan dengan fasilitas umum lengkap dan infrastruktur yang baik untuk mendukung kehidupan masyarakat.</p></div>
+                    </div>
+                    <div class="area-card" data-area="kelurahan-tambun" data-type="kelurahan">
+                        <div class="area-card-header"><span>🏘️ Kel. Tambun</span><span class="area-card-icon">›</span></div>
+                        <div class="area-card-body"><p>Kelurahan yang menjadi bagian penting dalam pengembangan wilayah Kecamatan Baolan.</p></div>
+                    </div>
+                    <div class="area-card" data-area="kelurahan-tuweley" data-type="kelurahan">
+                        <div class="area-card-header"><span>🏘️ Kel. Tuweley</span><span class="area-card-icon">›</span></div>
+                        <div class="area-card-body"><p>Kelurahan dengan potensi wisata alam dan sumber daya yang kaya untuk pengembangan berkelanjutan.</p></div>
+                    </div>
+                </div>
+
+                <div id="desa" class="tab-content">
+                    <div class="area-card" data-area="desa-dadakitan" data-type="desa">
+                        <div class="area-card-header"><span>🌾 Desa Dadakitan</span><span class="area-card-icon">›</span></div>
+                        <div class="area-card-body"><p>Desa dengan potensi pertanian yang berkembang dan masyarakat yang bekerja di sektor agribisnis.</p></div>
+                    </div>
+                    <div class="area-card" data-area="desa-buntuna" data-type="desa">
+                        <div class="area-card-header"><span>🌾 Desa Buntuna</span><span class="area-card-icon">›</span></div>
+                        <div class="area-card-body"><p>Desa yang dikenal dengan produk pertanian unggulan dan tradisi budaya masyarakat yang kuat.</p></div>
+                    </div>
+                    <div class="area-card" data-area="desa-leleannono" data-type="desa">
+                        <div class="area-card-header"><span>🌾 Desa Lelean Nono</span><span class="area-card-icon">›</span></div>
+                        <div class="area-card-body"><p>Desa dengan ekosistem alam yang masih terjaga dan potensi ekowisata yang menjanjikan.</p></div>
+                    </div>
+                    <div class="area-card" data-area="desa-pangi" data-type="desa">
+                        <div class="area-card-header"><span>🌾 Desa Pangi</span><span class="area-card-icon">›</span></div>
+                        <div class="area-card-body"><p>Desa yang memiliki sejarah panjang dan menjadi bagian integral dari pengembangan region Baolan.</p></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="map-container">
+            <div id="map"></div>
+            <div id="popup" class="ol-popup">
+                <a href="#" id="popup-closer" class="ol-popup-closer">✕</a>
+                <div id="popup-content"></div>
+            </div>
+            <div class="info-overlay">
+                <h3>📌 Peta Interaktif</h3>
+                <p>Gunakan mouse untuk zoom, geser untuk navigasi, dan klik layer untuk melihat detail wilayah Kecamatan Baolan.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="resources/qgis2web_expressions.js"></script>
+    <script src="./resources/functions.js"></script>
+    <script src="./resources/ol.js"></script>
+    <script src="./resources/ol-layerswitcher.js"></script>
+    <script src="layers/kecamatanBaolan_2.js"></script>
+    <script src="layers/DesaLeleannono_3.js"></script>
+    <script src="layers/DesaDadakitan_4.js"></script>
+    <script src="layers/DesaBuntuna_5.js"></script>
+    <script src="layers/DesaPangi_6.js"></script>
+    <script src="layers/kelurahanpanasakan_7.js"></script>
+    <script src="layers/KelurahanTambun_8.js"></script>
+    <script src="layers/KelurahanNalu_9.js"></script>
+    <script src="layers/kelurahanSidoarjo_10.js"></script>
+    <script src="layers/kelurahanBaru_11.js"></script>
+    <script src="layers/kelurahanTuweley_12.js"></script>
+    <script src="layers/pemukiman_13.js"></script>
+    <script src="layers/SMAN1TOLITOLI_14.js"></script>
+    <script src="layers/RumahSakit_15.js"></script>
+    <script src="styles/kecamatanBaolan_2_style.js"></script>
+    <script src="styles/DesaLeleannono_3_style.js"></script>
+    <script src="styles/DesaDadakitan_4_style.js"></script>
+    <script src="styles/DesaBuntuna_5_style.js"></script>
+    <script src="styles/DesaPangi_6_style.js"></script>
+    <script src="styles/kelurahanpanasakan_7_style.js"></script>
+    <script src="styles/KelurahanTambun_8_style.js"></script>
+    <script src="styles/KelurahanNalu_9_style.js"></script>
+    <script src="styles/kelurahanSidoarjo_10_style.js"></script>
+    <script src="styles/kelurahanBaru_11_style.js"></script>
+    <script src="styles/kelurahanTuweley_12_style.js"></script>
+    <script src="styles/pemukiman_13_style.js"></script>
+    <script src="styles/SMAN1TOLITOLI_14_style.js"></script>
+    <script src="styles/RumahSakit_15_style.js"></script>
+    <script src="./layers/layers.js" type="text/javascript"></script>
+    <script src="./resources/Autolinker.min.js"></script>
+    <script src="./resources/qgis2web.js"></script>
+</body>
+</html>
