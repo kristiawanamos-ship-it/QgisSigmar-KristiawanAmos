@@ -92,6 +92,100 @@
             line-height: 1.6;
             opacity: 0.95;
         }
+
+        .profile-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .profile-card {
+            background: rgba(255, 255, 255, 0.16);
+            padding: 12px 14px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.22);
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+        .profile-card strong {
+            display: block;
+            margin-bottom: 6px;
+            color: #fff;
+        }
+
+        .area-cards-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+            margin-top: 12px;
+        }
+
+        .area-card {
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .area-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.18);
+        }
+
+        .area-card.selected {
+            border-color: rgba(255, 215, 0, 0.8);
+            box-shadow: 0 18px 34px rgba(255, 215, 0, 0.18);
+        }
+
+        .selected-detail-card {
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            border-radius: 12px;
+            padding: 14px;
+            margin-top: 10px;
+        }
+
+        .selected-detail-title {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #fff;
+        }
+
+        .selected-detail-text {
+            font-size: 12px;
+            line-height: 1.6;
+            opacity: 0.95;
+        }
+
+        .area-card-header {
+            background: rgba(255, 255, 255, 0.08);
+            padding: 12px 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            font-size: 13px;
+        }
+
+        .area-card-body {
+            padding: 12px 14px 14px;
+            font-size: 12px;
+            line-height: 1.6;
+            color: #fff;
+        }
+
+        .area-card-icon {
+            opacity: 0.7;
+            transition: opacity 0.2s ease;
+        }
+
+        .area-card:hover .area-card-icon {
+            opacity: 1;
+        }
         
         .areas-grid {
             display: grid;
@@ -111,12 +205,68 @@
             border: 1px solid rgba(255, 255, 255, 0.2);
         }
         
+        .area-item.active {
+            background: rgba(255, 215, 0, 0.18);
+            border-color: rgba(255, 215, 0, 0.35);
+            color: #fff;
+            font-weight: 600;
+        }
+        
         .area-item:hover {
             background: rgba(255, 255, 255, 0.25);
             transform: translateY(-2px);
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
-        
+
+        .area-item-detail {
+            grid-column: 1 / -1;
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            border-radius: 8px;
+            padding: 12px 14px;
+            font-size: 12px;
+            line-height: 1.6;
+            color: #fff;
+            margin-top: -4px;
+            display: none;
+            animation: slideDown 0.2s ease;
+        }
+
+        .area-item-detail.show {
+            display: block;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-5px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Hide only the profile cards grid, keep the sections visible */
+        .profile-grid {
+            display: none;
+        }
+
+        /* Hide Profil Kelurahan section */
+        .section:has(> .section-title > i.fa-map-pin) {
+            display: none;
+        }
+
+        /* Hide Profil Desa section */
+        .section:has(> .section-title > i.fa-pagelines) {
+            display: none;
+        }
+
+        /* Hide author card */
+        .author-card {
+            display: none;
+        }
+
         .stats-grid {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
@@ -203,7 +353,119 @@
             background: rgba(255, 255, 255, 0.5);
         }
         
-        @media (max-width: 768px) {
+        /* Mobile optimized - Small phones (320px to 480px) */
+        @media (max-width: 480px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                height: auto;
+                max-height: 50vh;
+                overflow-y: auto;
+            }
+            
+            .sidebar-header {
+                padding: 20px 15px;
+            }
+            
+            .sidebar-header h1 {
+                font-size: 20px;
+            }
+            
+            .sidebar-header p {
+                font-size: 11px;
+            }
+            
+            .sidebar-content {
+                padding: 15px;
+            }
+            
+            .section {
+                padding: 12px;
+                margin-bottom: 12px;
+            }
+            
+            .section-title {
+                font-size: 13px;
+                gap: 6px;
+            }
+            
+            .section-title i {
+                font-size: 14px;
+            }
+            
+            .section-text {
+                font-size: 12px;
+                line-height: 1.5;
+            }
+            
+            #map {
+                height: 50vh;
+            }
+            
+            .areas-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 6px;
+            }
+            
+            .area-item {
+                padding: 6px 8px;
+                font-size: 11px;
+            }
+            
+            .area-cards-grid {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+            
+            .area-card-header {
+                font-size: 12px;
+                padding: 10px 12px;
+            }
+            
+            .area-card-body {
+                font-size: 11px;
+                padding: 10px 12px;
+            }
+            
+            .selected-detail-card {
+                padding: 12px;
+                margin-top: 8px;
+            }
+            
+            .selected-detail-title {
+                font-size: 13px;
+            }
+            
+            .selected-detail-text {
+                font-size: 11px;
+            }
+            
+            .area-item-detail {
+                padding: 10px 12px;
+                font-size: 11px;
+            }
+            
+            .info-overlay {
+                bottom: 10px;
+                right: 10px;
+                padding: 12px 15px;
+                max-width: 200px;
+            }
+            
+            .info-overlay h3 {
+                font-size: 12px;
+            }
+            
+            .info-overlay p {
+                font-size: 11px;
+            }
+        }
+
+        /* Tablets and medium screens (481px to 768px) */
+        @media (min-width: 481px) and (max-width: 768px) {
             .container {
                 flex-direction: column;
             }
@@ -221,6 +483,17 @@
             .areas-grid {
                 grid-template-columns: 1fr 1fr 1fr;
             }
+
+            .area-cards-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        
+        /* Large screens (769px and above) */
+        @media (min-width: 769px) {
+            .areas-grid {
+                grid-template-columns: 1fr 1fr;
+            }
         }
     </style>
 </head>
@@ -235,6 +508,14 @@
 
             <div class="sidebar-content">
                 <div id="semua" class="tab-content active">
+                    <div class="section" style="background: rgba(255, 215, 0, 0.12); border-left: 4px solid rgba(255, 215, 0, 0.6);">
+                        <div class="section-title" style="font-size: 12px; margin-bottom: 8px;"><i class="fas fa-user"></i> Informasi Pembuat</div>
+                        <div class="section-text" style="font-size: 11px;">
+                            <strong>Nama:</strong> Kristiawan Bernd Garcia Amos<br>
+                            <strong>NIM:</strong> 241011060037
+                        </div>
+                    </div>
+
                     <div class="section">
                         <div class="section-title"><i class="fas fa-info-circle"></i> Tentang Kecamatan</div>
                         <div class="section-text">
@@ -245,52 +526,70 @@
                     <div class="section">
                         <div class="section-title"><i class="fas fa-building"></i> Kelurahan</div>
                         <div class="areas-grid">
-                            <div class="area-item">📍 Baru</div>
-                            <div class="area-item">📍 Nalu</div>
-                            <div class="area-item">📍 Panasakan</div>
-                            <div class="area-item">📍 Sidoarjo</div>
-                            <div class="area-item">📍 Tambun</div>
-                            <div class="area-item">📍 Tuweley</div>
+                            <div class="area-item" data-area="kelurahan-baru">📍 Baru</div>
+                            <div class="area-item-detail" data-area="kelurahan-baru">Kelurahan yang terletak di wilayah Kecamatan Baolan dengan pemukiman penduduk yang ramai dan berkembang pesat.</div>
+                            <div class="area-item" data-area="kelurahan-nalu">📍 Nalu</div>
+                            <div class="area-item-detail" data-area="kelurahan-nalu">Area kelurahan dengan karakteristik geografis yang unik dan komunitas masyarakat yang solid.</div>
+                            <div class="area-item" data-area="kelurahan-panasakan">📍 Panasakan</div>
+                            <div class="area-item-detail" data-area="kelurahan-panasakan">Kelurahan yang dikenal dengan potensi perdagangan dan pusat aktivitas ekonomi lokal.</div>
+                            <div class="area-item" data-area="kelurahan-sidoarjo">📍 Sidoarjo</div>
+                            <div class="area-item-detail" data-area="kelurahan-sidoarjo">Area kelurahan dengan fasilitas umum lengkap dan infrastruktur yang baik untuk mendukung kehidupan masyarakat.</div>
+                            <div class="area-item" data-area="kelurahan-tambun">📍 Tambun</div>
+                            <div class="area-item-detail" data-area="kelurahan-tambun">Kelurahan yang menjadi bagian penting dalam pengembangan wilayah Kecamatan Baolan.</div>
+                            <div class="area-item" data-area="kelurahan-tuweley">📍 Tuweley</div>
+                            <div class="area-item-detail" data-area="kelurahan-tuweley">Kelurahan dengan potensi wisata alam dan sumber daya yang kaya untuk pengembangan berkelanjutan.</div>
                         </div>
                     </div>
 
                     <div class="section">
                         <div class="section-title"><i class="fas fa-tree"></i> Desa</div>
                         <div class="areas-grid">
-                            <div class="area-item">🌾 Dadakitan</div>
-                            <div class="area-item">🌾 Buntuna</div>
-                            <div class="area-item">🌾 Lelean Nono</div>
-                            <div class="area-item">🌾 Pangi</div>
+                            <div class="area-item" data-area="desa-dadakitan">🌾 Dadakitan</div>
+                            <div class="area-item-detail" data-area="desa-dadakitan">Desa dengan potensi pertanian yang berkembang dan masyarakat yang bekerja di sektor agribisnis.</div>
+                            <div class="area-item" data-area="desa-buntuna">🌾 Buntuna</div>
+                            <div class="area-item-detail" data-area="desa-buntuna">Desa yang dikenal dengan produk pertanian unggulan dan tradisi budaya masyarakat yang kuat.</div>
+                            <div class="area-item" data-area="desa-leleannono">🌾 Lelean Nono</div>
+                            <div class="area-item-detail" data-area="desa-leleannono">Desa dengan ekosistem alam yang masih terjaga dan potensi ekowisata yang menjanjikan.</div>
+                            <div class="area-item" data-area="desa-pangi">🌾 Pangi</div>
+                            <div class="area-item-detail" data-area="desa-pangi">Desa yang memiliki sejarah panjang dan menjadi bagian integral dari pengembangan region Baolan.</div>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <div class="section-title"><i class="fas fa-search"></i> Informasi Terpilih</div>
+                        <div class="selected-detail-card">
+                            <h4 class="selected-detail-title">Pilih Kelurahan atau Desa</h4>
+                            <div class="selected-detail-text">Klik nama pada bagian Kelurahan atau Desa untuk menampilkan detail informasinya di sini.</div>
                         </div>
                     </div>
 
                     <div class="section">
                         <div class="section-title"><i class="fas fa-map-pin"></i> Profil Kelurahan</div>
-                        <div class="section-text" style="font-size: 12px;">
-                            <strong>Kelurahan Baru:</strong> Area pemukiman dengan perkembangan pesat.<br><br>
-                            <strong>Kelurahan Nalu:</strong> Wilayah dengan komunitas masyarakat yang solid.<br><br>
-                            <strong>Kelurahan Panasakan:</strong> Pusat aktivitas ekonomi dan perdagangan lokal.<br><br>
-                            <strong>Kelurahan Sidoarjo:</strong> Dilengkapi fasilitas umum dan infrastruktur baik.<br><br>
-                            <strong>Kelurahan Tambun:</strong> Area strategis untuk pengembangan wilayah.<br><br>
-                            <strong>Kelurahan Tuweley:</strong> Potensi wisata alam dan sumber daya alam yang kaya.
+                        <div class="profile-grid">
+                            <div class="profile-card"><strong>Kelurahan Baru</strong>Area pemukiman dengan perkembangan pesat.</div>
+                            <div class="profile-card"><strong>Kelurahan Nalu</strong>Wilayah dengan komunitas masyarakat yang solid.</div>
+                            <div class="profile-card"><strong>Kelurahan Panasakan</strong>Pusat aktivitas ekonomi dan perdagangan lokal.</div>
+                            <div class="profile-card"><strong>Kelurahan Sidoarjo</strong>Dilengkapi fasilitas umum dan infrastruktur baik.</div>
+                            <div class="profile-card"><strong>Kelurahan Tambun</strong>Area strategis untuk pengembangan wilayah.</div>
+                            <div class="profile-card"><strong>Kelurahan Tuweley</strong>Potensi wisata alam dan sumber daya alam yang kaya.</div>
                         </div>
                     </div>
 
                     <div class="section">
                         <div class="section-title"><i class="fas fa-pagelines"></i> Profil Desa</div>
-                        <div class="section-text" style="font-size: 12px;">
-                            <strong>Desa Dadakitan:</strong> Potensi pertanian yang berkembang dan masyarakat yang bekerja di sektor agribisnis.<br><br>
-                            <strong>Desa Buntuna:</strong> Produk pertanian unggulan dan tradisi budaya masyarakat yang kuat.<br><br>
-                            <strong>Desa Lelean Nono:</strong> Ekosistem alam yang masih terjaga dan potensi ekowisata yang menjanjikan.<br><br>
-                            <strong>Desa Pangi:</strong> Bagian integral pengembangan region Baolan.
+                        <div class="profile-grid">
+                            <div class="profile-card"><strong>Desa Dadakitan</strong>Potensi pertanian yang berkembang dan masyarakat yang bekerja di sektor agribisnis.</div>
+                            <div class="profile-card"><strong>Desa Buntuna</strong>Produk pertanian unggulan dan tradisi budaya masyarakat yang kuat.</div>
+                            <div class="profile-card"><strong>Desa Lelean Nono</strong>Ekosistem alam yang masih terjaga dan potensi ekowisata yang menjanjikan.</div>
+                            <div class="profile-card"><strong>Desa Pangi</strong>Bagian integral pengembangan region Baolan.</div>
                         </div>
                     </div>
 
                     <div class="section">
                         <div class="section-title"><i class="fas fa-hospital"></i> Fasilitas Penting</div>
                         <div class="section-text">
-                            <div>🏥 <strong>Rumah Sakit</strong> - Pelayanan kesehatan utama untuk wilayah.</div>
-                            <div>🏫 <strong>SMAN 1 Tolitoli</strong> - Institusi pendidikan menengah penting.</div>
+                            <div>🏥 <strong>Rumah Sakit</strong> (<span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: #FF4444; vertical-align: middle; margin: 0 3px;"></span>) - Pelayanan kesehatan utama untuk wilayah.</div>
+                            <div>🏫 <strong>SMAN 1 Tolitoli</strong> (<span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: #4444FF; vertical-align: middle; margin: 0 3px;"></span>) - Institusi pendidikan menengah penting.</div>
                             <div>📍 Fasilitas pendukung dengan akses mudah dijangkau warga.</div>
                         </div>
                     </div>
@@ -313,48 +612,52 @@
                 </div>
 
                 <div id="kelurahan" class="tab-content">
-                    <div class="area-card" data-area="kelurahan-baru" data-type="kelurahan">
-                        <div class="area-card-header"><span>🏘️ Kel. Baru</span><span class="area-card-icon">›</span></div>
-                        <div class="area-card-body"><p>Kelurahan yang terletak di wilayah Kecamatan Baolan dengan pemukiman penduduk yang ramai dan berkembang pesat.</p></div>
-                    </div>
-                    <div class="area-card" data-area="kelurahan-nalu" data-type="kelurahan">
-                        <div class="area-card-header"><span>🏘️ Kel. Nalu</span><span class="area-card-icon">›</span></div>
-                        <div class="area-card-body"><p>Area kelurahan dengan karakteristik geografis yang unik dan komunitas masyarakat yang solid.</p></div>
-                    </div>
-                    <div class="area-card" data-area="kelurahan-panasakan" data-type="kelurahan">
-                        <div class="area-card-header"><span>🏘️ Kel. Panasakan</span><span class="area-card-icon">›</span></div>
-                        <div class="area-card-body"><p>Kelurahan yang dikenal dengan potensi perdagangan dan pusat aktivitas ekonomi lokal.</p></div>
-                    </div>
-                    <div class="area-card" data-area="kelurahan-sidoarjo" data-type="kelurahan">
-                        <div class="area-card-header"><span>🏘️ Kel. Sidoarjo</span><span class="area-card-icon">›</span></div>
-                        <div class="area-card-body"><p>Area kelurahan dengan fasilitas umum lengkap dan infrastruktur yang baik untuk mendukung kehidupan masyarakat.</p></div>
-                    </div>
-                    <div class="area-card" data-area="kelurahan-tambun" data-type="kelurahan">
-                        <div class="area-card-header"><span>🏘️ Kel. Tambun</span><span class="area-card-icon">›</span></div>
-                        <div class="area-card-body"><p>Kelurahan yang menjadi bagian penting dalam pengembangan wilayah Kecamatan Baolan.</p></div>
-                    </div>
-                    <div class="area-card" data-area="kelurahan-tuweley" data-type="kelurahan">
-                        <div class="area-card-header"><span>🏘️ Kel. Tuweley</span><span class="area-card-icon">›</span></div>
-                        <div class="area-card-body"><p>Kelurahan dengan potensi wisata alam dan sumber daya yang kaya untuk pengembangan berkelanjutan.</p></div>
+                    <div class="area-cards-grid">
+                        <div class="area-card" data-area="kelurahan-baru" data-type="kelurahan">
+                            <div class="area-card-header"><span>🏘️ Kel. Baru</span><span class="area-card-icon">›</span></div>
+                            <div class="area-card-body"><p>Kelurahan yang terletak di wilayah Kecamatan Baolan dengan pemukiman penduduk yang ramai dan berkembang pesat.</p></div>
+                        </div>
+                        <div class="area-card" data-area="kelurahan-nalu" data-type="kelurahan">
+                            <div class="area-card-header"><span>🏘️ Kel. Nalu</span><span class="area-card-icon">›</span></div>
+                            <div class="area-card-body"><p>Area kelurahan dengan karakteristik geografis yang unik dan komunitas masyarakat yang solid.</p></div>
+                        </div>
+                        <div class="area-card" data-area="kelurahan-panasakan" data-type="kelurahan">
+                            <div class="area-card-header"><span>🏘️ Kel. Panasakan</span><span class="area-card-icon">›</span></div>
+                            <div class="area-card-body"><p>Kelurahan yang dikenal dengan potensi perdagangan dan pusat aktivitas ekonomi lokal.</p></div>
+                        </div>
+                        <div class="area-card" data-area="kelurahan-sidoarjo" data-type="kelurahan">
+                            <div class="area-card-header"><span>🏘️ Kel. Sidoarjo</span><span class="area-card-icon">›</span></div>
+                            <div class="area-card-body"><p>Area kelurahan dengan fasilitas umum lengkap dan infrastruktur yang baik untuk mendukung kehidupan masyarakat.</p></div>
+                        </div>
+                        <div class="area-card" data-area="kelurahan-tambun" data-type="kelurahan">
+                            <div class="area-card-header"><span>🏘️ Kel. Tambun</span><span class="area-card-icon">›</span></div>
+                            <div class="area-card-body"><p>Kelurahan yang menjadi bagian penting dalam pengembangan wilayah Kecamatan Baolan.</p></div>
+                        </div>
+                        <div class="area-card" data-area="kelurahan-tuweley" data-type="kelurahan">
+                            <div class="area-card-header"><span>🏘️ Kel. Tuweley</span><span class="area-card-icon">›</span></div>
+                            <div class="area-card-body"><p>Kelurahan dengan potensi wisata alam dan sumber daya yang kaya untuk pengembangan berkelanjutan.</p></div>
+                        </div>
                     </div>
                 </div>
 
                 <div id="desa" class="tab-content">
-                    <div class="area-card" data-area="desa-dadakitan" data-type="desa">
-                        <div class="area-card-header"><span>🌾 Desa Dadakitan</span><span class="area-card-icon">›</span></div>
-                        <div class="area-card-body"><p>Desa dengan potensi pertanian yang berkembang dan masyarakat yang bekerja di sektor agribisnis.</p></div>
-                    </div>
-                    <div class="area-card" data-area="desa-buntuna" data-type="desa">
-                        <div class="area-card-header"><span>🌾 Desa Buntuna</span><span class="area-card-icon">›</span></div>
-                        <div class="area-card-body"><p>Desa yang dikenal dengan produk pertanian unggulan dan tradisi budaya masyarakat yang kuat.</p></div>
-                    </div>
-                    <div class="area-card" data-area="desa-leleannono" data-type="desa">
-                        <div class="area-card-header"><span>🌾 Desa Lelean Nono</span><span class="area-card-icon">›</span></div>
-                        <div class="area-card-body"><p>Desa dengan ekosistem alam yang masih terjaga dan potensi ekowisata yang menjanjikan.</p></div>
-                    </div>
-                    <div class="area-card" data-area="desa-pangi" data-type="desa">
-                        <div class="area-card-header"><span>🌾 Desa Pangi</span><span class="area-card-icon">›</span></div>
-                        <div class="area-card-body"><p>Desa yang memiliki sejarah panjang dan menjadi bagian integral dari pengembangan region Baolan.</p></div>
+                    <div class="area-cards-grid">
+                        <div class="area-card" data-area="desa-dadakitan" data-type="desa">
+                            <div class="area-card-header"><span>🌾 Desa Dadakitan</span><span class="area-card-icon">›</span></div>
+                            <div class="area-card-body"><p>Desa dengan potensi pertanian yang berkembang dan masyarakat yang bekerja di sektor agribisnis.</p></div>
+                        </div>
+                        <div class="area-card" data-area="desa-buntuna" data-type="desa">
+                            <div class="area-card-header"><span>🌾 Desa Buntuna</span><span class="area-card-icon">›</span></div>
+                            <div class="area-card-body"><p>Desa yang dikenal dengan produk pertanian unggulan dan tradisi budaya masyarakat yang kuat.</p></div>
+                        </div>
+                        <div class="area-card" data-area="desa-leleannono" data-type="desa">
+                            <div class="area-card-header"><span>🌾 Desa Lelean Nono</span><span class="area-card-icon">›</span></div>
+                            <div class="area-card-body"><p>Desa dengan ekosistem alam yang masih terjaga dan potensi ekowisata yang menjanjikan.</p></div>
+                        </div>
+                        <div class="area-card" data-area="desa-pangi" data-type="desa">
+                            <div class="area-card-header"><span>🌾 Desa Pangi</span><span class="area-card-icon">›</span></div>
+                            <div class="area-card-body"><p>Desa yang memiliki sejarah panjang dan menjadi bagian integral dari pengembangan region Baolan.</p></div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -409,5 +712,62 @@
     <script src="./layers/layers.js" type="text/javascript"></script>
     <script src="./resources/Autolinker.min.js"></script>
     <script src="./resources/qgis2web.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var selectedTitle = document.querySelector('.selected-detail-title');
+            var selectedText = document.querySelector('.selected-detail-text');
+            var selectedCard = document.querySelector('.selected-detail-card');
+
+            function clearActiveItems() {
+                document.querySelectorAll('.area-item.active').forEach(function(item) {
+                    item.classList.remove('active');
+                });
+                document.querySelectorAll('.area-card.selected').forEach(function(card) {
+                    card.classList.remove('selected');
+                });
+                document.querySelectorAll('.area-item-detail.show').forEach(function(detail) {
+                    detail.classList.remove('show');
+                });
+            }
+
+            function updateSelectedInfo(areaKey) {
+                var sourceCard = document.querySelector('.area-card[data-area="' + areaKey + '"]');
+                if (!sourceCard) {
+                    return;
+                }
+                var headerText = sourceCard.querySelector('.area-card-header span').textContent;
+                var bodyHTML = sourceCard.querySelector('.area-card-body').innerHTML;
+
+                selectedTitle.textContent = headerText;
+                selectedText.innerHTML = bodyHTML;
+
+                clearActiveItems();
+                var selectedItem = document.querySelector('.area-item[data-area="' + areaKey + '"]');
+                if (selectedItem) {
+                    selectedItem.classList.add('active');
+                }
+                sourceCard.classList.add('selected');
+            }
+
+            document.querySelectorAll('.area-item[data-area]').forEach(function(item) {
+                item.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    var areaKey = this.dataset.area;
+                    var detail = document.querySelector('.area-item-detail[data-area="' + areaKey + '"]');
+                    
+                    if (detail) {
+                        var wasActive = this.classList.contains('active');
+                        clearActiveItems();
+                        
+                        if (!wasActive) {
+                            this.classList.add('active');
+                            detail.classList.add('show');
+                            updateSelectedInfo(areaKey);
+                        }
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html>
